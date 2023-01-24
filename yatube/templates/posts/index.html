@@ -1,0 +1,19 @@
+{% extends 'base.html' %} 
+{% load thumbnail %}
+{% block title %}
+  <title>Последние объявления на сайте</title>
+{% endblock %}  
+{% block content %}
+{% load cache %}
+{% cache 20 index_page page_obj.number %}
+<div class="container">
+  <div class="container py-5">
+    {% include 'includes/switcher.html' %}
+    {% for post in page_obj %}     
+    {% include 'includes/description.html' %}
+    {% endfor %}  
+    {% include 'posts/includes/paginator.html' %}
+  </div> 
+</div> 
+{% endcache %} 
+{% endblock content %}
