@@ -5,10 +5,10 @@
     <div class="container py-5">        
         <h1>Все посты пользователя {{ author }} </h1>
           <h3>Всего постов: {{ author.posts.count }} </h3>
-          {% include 'posts/includes/unfollow_card.html' %} 
+          {% include 'includes/unfollow_card.html' %} 
             <article>
-              {% include 'posts/includes/card_info.html' %} 
-              {% include 'posts/includes/paginator.html' %}
+              {% include 'includes/description.html' %} 
+              {% include 'includes/paginator.html' %}
             </article>
     </div>
   {% endblock content %}
