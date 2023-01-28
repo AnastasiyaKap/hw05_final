@@ -1,7 +1,7 @@
-from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Comment, Group, Follow, Post, User
+from django.shortcuts import get_object_or_404, redirect, render
 from .forms import CommentForm, PostForm
+from .models import Comment, Group, Follow, Post, User
 from .utils import get_page
 
 
@@ -12,10 +12,8 @@ def index(request):
 
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
-    post_list = Post.objects.select_related('group')
     context = {
-        'group': group,
-        'post_list': post_list
+        'group': group
     }
     context.update(get_page(group.posts.all(), request))
     return render(request, 'posts/group_list.html', context)
@@ -23,7 +21,7 @@ def group_posts(request, slug):
 
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    comments = Comment.objects.filter(post_id__exact=post.pk)
+    comments = Comment.objects.filter(post_id=post.pk)
     context = {
         'post': post,
         'form': CommentForm(),
@@ -44,22 +42,18 @@ def post_create(request):
 
 
 def profile(request, username):
-    author = get_object_or_404(User, username=username)
+    person = get_object_or_404(User, username=username)
+    author = User.objects.get(username=username)
     if request.user.is_authenticated:
         following = Follow.objects.filter(
-            user__exact=request.user, author__exact=author
+            user=request.user, author=person
         ).exists()
-        if request.user != author.username:
-            non_author = True
+        if not following:
+            following = None
         else:
-            non_author = False
-    else:
-        following = False
-        non_author = False
+            following = True
     context = {
         'author': author,
-        'following': following,
-        'non_author': non_author,
     }
     context.update(get_page(author.posts.all(), request))
     return render(request, 'posts/profile.html', context)
@@ -128,5 +122,4 @@ def profile_unfollow(request, username):
     if Follow.objects.filter(user=user, author=author).exists():
         Follow.objects.filter(user=user, author=author).delete()
         return redirect('posts:profile', username=username)
-    else:
-        return redirect('posts:profile', username=username)
+    return redirect('posts:profile', username=username)

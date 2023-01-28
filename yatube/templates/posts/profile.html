@@ -7,7 +7,9 @@
           <h3>Всего постов: {{ author.posts.count }} </h3>
           {% include 'includes/unfollow_card.html' %} 
             <article>
-              {% include 'includes/description.html' %} 
+              {% for post in page_obj %}  
+                {% include 'includes/text_post.html' %} 
+              {% endfor %} 
               {% include 'includes/paginator.html' %}
             </article>
     </div>

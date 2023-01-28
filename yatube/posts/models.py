@@ -19,12 +19,13 @@ class Post(models.Model):
         null=True,
         on_delete=models.CASCADE,
         related_name='posts',
-        verbose_name="Группа"
+        verbose_name='Группа'
     )
     image = models.ImageField(
         'Картинка',
         upload_to='posts/',
-        blank=True
+        blank=True,
+        null=True
     )
 
     class Meta:
@@ -73,3 +74,9 @@ class Follow(models.Model):
         on_delete=models.CASCADE,
         related_name='following',
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'author'],
+                                    name='unique_following')
+        ]
