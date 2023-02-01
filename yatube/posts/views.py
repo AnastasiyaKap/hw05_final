@@ -33,27 +33,22 @@ def post_detail(request, post_id):
 @login_required
 def post_create(request):
     form = PostForm(request.POST or None, files=request.FILES or None)
+    if not form.is_valid():
+        return render(request, 'posts/create_post.html', {'form': form})
     post = form.save(commit=False)
     post.author = request.user
     post.save()
-    if not form.is_valid():
-        return render(request, 'posts/create_post.html', {'form': form})
     return redirect('posts:profile', username=post.author)
 
 
 def profile(request, username):
-    person = get_object_or_404(User, username=username)
-    author = User.objects.get(username=username)
+    following = False
+    author = get_object_or_404(User, username=username)
     if request.user.is_authenticated:
-        following = Follow.objects.filter(
-            user=request.user, author=person
-        ).exists()
-        if not following:
-            following = None
-        else:
-            following = True
+        following = author.following.filter(user=request.user).exists()
     context = {
         'author': author,
+        'following': following
     }
     context.update(get_page(author.posts.all(), request))
     return render(request, 'posts/profile.html', context)

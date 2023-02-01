@@ -72,14 +72,14 @@ class PostURLTests(TestCase):
             reverse(
                 'posts:post_edit',
                 kwargs={'post_id': self.post.id}
-            ): HTTPStatus.FOUND,
-            reverse('posts:post_create'): HTTPStatus.FOUND,
+            ): HTTPStatus.OK,
+            reverse('posts:post_create'): HTTPStatus.OK,
             '/unexisting_page/': HTTPStatus.NOT_FOUND,
         }
         for address, code in code_answer_for_users.items():
             with self.subTest(address=address):
                 cache.clear()
-                response = self.client.get(address)
+                response = self.authorized_client.get(address)
                 self.assertEqual(response.status_code, code)
 
     def test_urls_uses_auth_author(self):

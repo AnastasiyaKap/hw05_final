@@ -1,4 +1,5 @@
 from django import forms
+from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
 from django.urls import reverse
@@ -13,6 +14,7 @@ NUMBERS_PAGES_SECOND = 3
 class PostPagesTests(TestCase):
     def setUp(self):
         # Создаем авторизованный клиент
+        cache.clear()
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
 
@@ -350,6 +352,7 @@ class PaginatorViewsTest(TestCase):
 
     def setUp(self):
         # Создаем авторизованный клиент
+        cache.clear()
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
 
